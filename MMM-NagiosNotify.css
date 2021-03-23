@@ -25,14 +25,14 @@
 
 .MMM-NagiosNotify .title {
     border-radius: 0.5em;
-    font-size: 17px;
+    font-size: 14px;
     margin-left: 0.8em;
     margin-right: 0.8em;
     padding: 0 0.6em;
 }
 
 .MMM-NagiosNotify .info {
-    font-size: 15px;
+    font-size: 13px;
     white-space: nowrap;
     overflow: hidden;
 }

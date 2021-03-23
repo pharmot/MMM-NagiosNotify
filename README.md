@@ -47,12 +47,12 @@ This can be in any of the .cfg files that are loaded by Nagios.  Replace the IP 
 ```properties
 define command {
     command_name    notify_mm_service
-    command_line    $USER1$/mm_notify 192.168.1.100:8080/nagios service $HOSTNAME$ $SERVICEDESC$ $SERVICESTATE$ "$SERVICEOUTPUT$"
+    command_line    $USER1$/mm_notify http://192.168.1.100:8080/nagios service $HOSTNAME$ $SERVICEDESC$ $SERVICESTATE$ "$SERVICEOUTPUT$"
 }
 
 define command {
     command_name    notify_mm_host
-    command_line    $USER1$/mm_notify 192.168.1.100:8080/nagios host $HOSTNAME$ is_host $HOSTSTATE$ "$HOSTOUTPUT$"
+    command_line    $USER1$/mm_notify http://192.168.1.100:8080/nagios host $HOSTNAME$ is_host $HOSTSTATE$ "$HOSTOUTPUT$"
 }
 
 define contact {
