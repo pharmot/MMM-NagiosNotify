@@ -1,11 +1,9 @@
-/* global Module, Log, MM, config */
-
 /* Magic Mirror
-* Module: NagoisNotify
-*
-* By: Andy Briggs
-* MIT Licensed.
-*/
+ * Module: NagoisNotify
+ *
+ * By: Andy Briggs
+ * MIT Licensed.
+ */
 
 Module.register("MMM-NagiosNotify", {
     defaults: {
