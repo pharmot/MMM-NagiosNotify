@@ -1,0 +1,58 @@
+//compileExpanded
+
+/*
+.row.warning
+.row.critical
+
+    .status
+
+    .title
+
+    .info
+
+*/
+
+.MMM-NagiosNotify {
+    .fa-li {
+        font-size: 16px;
+        left: -1em;
+        width: 1em;
+    }
+
+    .warning .fa-li {
+        color: #f6bf26;
+    }
+
+    .critical .fa-li {
+        color: #c00;
+    }
+
+    .row {
+        margin-bottom: 2px;
+        display: flex;
+        align-items: center;
+        line-height: 24px;
+    }
+
+    .title {
+        border-radius: 0.5em;
+        font-size: 17px;
+        margin-left: 0.8em;
+        margin-right: 0.8em;
+        padding: 0 0.6em;
+    }
+
+    .info {
+        font-size: 15px;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .warning .title {
+        background: rgba(221, 183, 39, 0.3);
+    }
+
+    .critical .title {
+        background: rgba(204, 0, 0, 0.3);
+    }
+}

@@ -1,0 +1,76 @@
+#!/bin/bash
+#
+# Nagios Plugin to send notifications to the MMM-NagiosNotify module for the
+# MagicMirror (https://github.com/MichMich/MagicMirror)
+#
+# By Andy Briggs (https://github.com/pharmot/MMM-NagiosNotify)
+# MIT Licensed
+
+APPNAME=$(basename $0)
+desc=""
+hostname=""
+type=""
+state=""
+info=""
+mmhost=""
+
+print_usage(){
+    echo ""
+       echo "Usage (host):"
+       echo "  ./$APPNAME -m <mm_address> -t host -h <hostname> \ "
+       echo "      -d is_host -s <host_state> -i <info/output>"
+       echo ""
+       echo "Usage (service):"
+       echo "  ./$APPNAME -m <mm_address> -t service -h <hostname> \ "
+       echo "      -d <service_description> -s <service_state> -i <info/output>"
+       echo ""
+       echo "Options:"
+       echo " -m  <mm_address>"
+       echo "             MagicMirror IP address and port"
+       echo " -t  host|service"
+       echo "             Is this a host or service notification?"
+       echo " -h  <hostname>"
+       echo "             Nagios host causing notification"
+       echo " -d  <service_description>|is_host"
+       echo "             Description for service notifications"
+       echo "             or any string for host notifications that is not the"
+       echo "             same as any of that host's services (e.g. 'is_host')"
+       echo " -i  <info/output>"
+       echo "             Text that will be displayed on MagicMirror"
+       echo ""
+}
+
+if [[ $# -eq 0 ]]; then
+    print_usage
+    exit 3
+fi
+
+while test -n "$1"; do
+    case "$1" in
+        -m) mmhost=$2;   shift;;
+        -t) type=$2;     shift;;
+        -h) hostname=$2; shift;;
+        -d) desc=$2;     shift;;
+        -s) state=$2;    shift;;
+        -i) info=$2;     shift;;
+        *)
+            echo "Unknown argument: $1"
+            print_usage
+            exit 3
+            ;;
+    esac
+    shift
+done
+
+if [ "$mmhost" == "" ] || [ "$type" = "" ] || [ "$hostname" = "" ] || [ "$desc" = "" ] || [ "$state" = "" ]; then
+    print_usage
+    exit 3
+fi
+
+infoString=$(printf %s "$info" | jq -sRr @uri)
+hostString=$(printf %s "$hostname" | jq -sRr @uri)
+descString=$(printf %s "$desc" | jq -sRr @uri)
+
+fullUrl="$mmhost/notify/nagios?type=$type&host=$hostString&desc=$descString&status=$state&info=$infoString"
+
+/usr/bin/curl -X POST $fullUrl
