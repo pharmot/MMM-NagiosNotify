@@ -1,0 +1,62 @@
+#!/bin/bash
+#
+# Nagios Plugin to send notifications to the MMM-NagiosNotify module for the
+# MagicMirror (https://github.com/MichMich/MagicMirror)
+#
+# By Andy Briggs (https://github.com/pharmot/MMM-NagiosNotify)
+# MIT Licensed
+
+APPNAME=$(basename $0)
+mmhost="${1}/nagiosnotify"
+type="$2"
+hostname="$3"
+desc="$4"
+state="$5"
+info="$6"
+
+print_usage(){
+    echo ""
+    echo "Usage (host):"
+    echo "  ./$APPNAME <mm_address> host <host_name> is_host <host_state> <host_output>"
+    echo ""
+    echo "Usage (service):"
+    echo "  ./$APPNAME <mm_address> service <host_name> <service_desc> <service_state> <service_output>"
+    echo ""
+    echo "Options:"
+    echo " <mm_address>     MagicMirror IP address and port"
+    echo ""
+    echo " host|service     Is this a host or service notification?"
+    echo ""
+    echo " <host_name>      Nagios host causing notification"
+    echo ""
+    echo " <service_desc>   Description for service notifications"
+    echo "                  or any string for host notifications that is not the"
+    echo "                  same as any of that host's services (e.g. 'is_host')"
+    echo ""
+    echo " <host_state>"
+    echo " <service_state>  Host or service state"
+    echo ""
+    echo " <host_output>"
+    echo " <service_output> Text that will be displayed on MagicMirror"
+    echo ""
+}
+
+if [[ $# -eq 0 ]]; then
+    print_usage
+    exit 3
+fi
+
+if [ "$mmhost" == "" ] || [ "$type" = "" ] || [ "$hostname" = "" ] || [ "$desc" = "" ] || [ "$state" = "" ]; then
+    printf "%s\n" "Error with inputs: $1 $2 $3 $4 $5 $6"
+    exit 3
+fi
+
+jsonout=$(jq -n --arg my_info "$info" --arg my_host "$hostname" --arg my_desc "$desc" --arg my_state "$state" --arg my_type "$type" '{
+	"type": $my_type,
+	"host": $my_host,
+	"desc": $my_desc,
+	"status": $my_state,
+	"info": $my_info
+}')
+
+curl --header "Content-Type: application/json" --request POST --data "$jsonout" "$mmhost"
