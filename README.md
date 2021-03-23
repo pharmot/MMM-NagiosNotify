@@ -65,8 +65,8 @@ define command {
 define contact {
     contact_name                        magicmirror
     alias                               Magic Mirror
-    service_notification_options        w,c
-    host_notification_options           d,u
+    service_notification_options        w,c,r
+    host_notification_options           d,u,r
     service_notification_commands       notify_mm_service
     host_notification_commands          notify_mm_host
 }

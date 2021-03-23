@@ -13,6 +13,7 @@ module.exports = NodeHelper.create({
 
         this.expressApp.post("/notify/nagios", (req, res) => {
             var query = url.parse(req.url, true).query;
+            console.log(`Nagios ${query.type} notification for ${query.type === 'service' ? (query.desc + " on " : ""}${query.host}: ${query.status} -- ${query.info}`);
             this.sendSocketNotification("NAGIOS_NOTIFICATION_RECEIVED", query);
             res.status(200).send({status: 200});
         });
