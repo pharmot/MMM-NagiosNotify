@@ -8,14 +8,15 @@ This an extension for the [MagicMirror](https://github.com/MichMich/MagicMirror)
 
 ## Installation
 Navigate into your MagicMirror's `modules` folder and execute:
+
 ```bash
 git clone https://github.com/pharmot/MMM-NagiosNotify.git
-cd MMM-NagiosNotify
-npm install
 ```
+
 ## Using the module
 
 Add to the modules array in the `config/config.js` file:
+
 
 ```js
 modules: [
@@ -27,39 +28,26 @@ modules: [
 ]
 ```
 
-## Configuration options
+Existing notifications are cleared when Nagios sends a second notification with the status of "UP" (for hosts) or "OK" (for services).  To clear notifications manually, you can send a notification from another module (e.g. a remote control or menu module)
 
-There are currently no configurable options.
+```js
+this.sendNotification('CLEAR_NAGIOS_NOTIFICATIONS')`;
+```
 
-## Dependencies
-Installed via `npm install`
 
-- [url](https://www.npmjs.com/package/url)
+## Example Nagios Server Configuration
 
-## Nagios Server Configuration
-
-1. Copy the `mm_notify` shell script to your Nagios server's libexec folder e.g. `/usr/local/nagios/libexec`
-1. Make the file executable (`sudo chmod 755 mm_notify`)
-1. Add a contact and commands to your Nagios config files (see example below)
-1. Associate your MagicMirror contact with desired hosts and services.
+This can be in any of the .cfg files that are loaded by Nagios.  Replace the IP address with your MagicMirror's IP address (and port).  The host names and service names must be URL-friendly (i.e. no spaces, special characters, etc.).
 
 ```properties
-# Example Nagios configuration
-# (can be in any of the .cfg files that are loaded by Nagios)
-#
-# Commands are split into multiple lines for ease of reading.
-# Combine into a single line in your actual configuration
-
 define command {
     command_name    notify_mm_service
-    command_line    $USER1$/mm_notify -m "http://192.168.0.100:8080" -t "service"
-                        -h $HOSTNAME$ -d $SERVICEDESC$ -s $SERVICESTATE$ -i $SERVICEOUTPUT$
+    command_line    /usr/bin/curl -X POST http://192.168.0.100:8080/nagios/service/$HOSTNAME$/$SERVICEDESCRIPTION$/$SERVICESTATE$?info=$(printf %s "$SERVICEOUTPUT$" | jq -sRr @uri)
 }
 
 define command {
     command_name    notify_mm_host
-    command_line    $USER1$/mm_notify -m "http://192.168.0.100:8080" -t "host"
-                        -h $HOSTNAME$ -d "is_host" -s $HOSTSTATE$ -i $HOSTOUTPUT$
+    command_line    /usr/bin/curl -X POST http://192.168.0.100:8080/nagios/host/$HOSTNAME$/$HOSTSTATE$?info=$(printf %s "$HOSTOUTPUT$" | jq -sRr @uri)
 }
 
 define contact {

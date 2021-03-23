@@ -12,7 +12,5 @@
     "url": "https://github.com/pharmot/MMM-NagiosNotify/issues"
   },
   "homepage": "https://github.com/pharmot/MMM-NagiosNotify#readme",
-  "dependencies": {
-    "url": "^0.11.0"
-  }
+  "dependencies": {}
 }
